@@ -14,7 +14,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from models import LSTM, AttBLSTM, BLSTM_L, BLSTM
-from utils import PRAS_Dataset
+from utils import Air_Dataset
 
 '''
 Typical Mixed Precision Training
@@ -43,7 +43,7 @@ def train(model: nn.Module,
           step_lr: bool = True,
           lr_change_step: int = 10,
           gamma: float = 0.99,
-          device: str = "cpu"):
+          device: str = "cuda"):
     model.to(device)
     optimizer = optim.AdamW(model.parameters(), lr=learning_rate)
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, lr_change_step, gamma=gamma)
@@ -147,9 +147,9 @@ def train(model: nn.Module,
     return final_name
 
 
-def test(model: nn.Module,
-         test_dataset: PRAS_Dataset,
-         device: str = "cpu"):
+def xtest(model: nn.Module,
+         test_dataset: Air_Dataset,
+         device: str = "cuda"):
     model.to(device)
     model.eval()
     loss_caculate = nn.MSELoss().to(device)
@@ -186,7 +186,7 @@ def test(model: nn.Module,
 if __name__ == '__main__':
     file_path = './data/AirQualityUCI/data_array/air.array'
 
-    batch_size = 1024
+    batch_size = 16
     do_train = True
     learning_rate = 0.0001
     epochs = 4000
@@ -201,8 +201,8 @@ if __name__ == '__main__':
 
     for input_len in input_lens:
         print(f"输入长度为{input_len}")
-        train_dataset = PRAS_Dataset(input_len=input_len, train=True, file_path=file_path, transformer=True)
-        test_dataset = PRAS_Dataset(input_len=input_len, train=False, file_path=file_path, transformer=True)
+        train_dataset = Air_Dataset(input_len=input_len, train=True, file_path=file_path, transformer=True)
+        test_dataset = Air_Dataset(input_len=input_len, train=False, file_path=file_path, transformer=True)
 
         train_loader = DataLoader(train_dataset, shuffle=True, batch_size=batch_size, drop_last=True)
         test_loader = DataLoader(test_dataset, shuffle=False, batch_size=batch_size, drop_last=True)
@@ -220,7 +220,7 @@ if __name__ == '__main__':
         if do_test:
             # model = BLSTM(input_size=12, output_size=12)
             model.load_state_dict(torch.load(final_name))
-            i, p, t, loss_MSE, loss_MAE, length = test(model=model, test_dataset=test_dataset)
+            i, p, t, loss_MSE, loss_MAE, length = xtest(model=model, test_dataset=test_dataset)
 
             # for plot_feature_idx in range(0, 15):
             #     plt.figure(plot_feature_idx)

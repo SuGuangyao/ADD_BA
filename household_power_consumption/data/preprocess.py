@@ -13,7 +13,7 @@ class Preprocess(object):
     def __init__(self,path, filename):
         super(Preprocess, self).__init__()
 
-        dataset = pd.read_csv(path + '/' + file_name, sep=';', header=0,
+        dataset = pd.read_csv(path + '/' + file_name, sep=';', header=0,nrows=190000,
                               low_memory=False, infer_datetime_format=True, engine='c')
         dataset.replace('?', np.nan, inplace=True)
         dataset = dataset.drop(["Date","Time"], axis=1)
@@ -66,4 +66,4 @@ if __name__ == "__main__":
     file_name = "household_power_consumption.txt"
     preprocess = Preprocess(path, filename=file_name)
     data_array = preprocess.df.values
-    joblib.dump(data_array, './pre_data/power.array')
+    joblib.dump(data_array, './pre_data/power1.array')

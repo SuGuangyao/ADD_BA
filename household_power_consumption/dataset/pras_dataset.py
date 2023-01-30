@@ -13,7 +13,7 @@ class PRAS_Dataset(Dataset):
                  train: bool = True,
                  transformer: bool = False,
                  train_test_split_ratio: float = 0.8,
-                 file_path: str = '../data/pre_data/power.array'):
+                 file_path: str = '../data/pre_data/power1.array'):
         super(PRAS_Dataset, self).__init__()
 
         self.prsa_array = joblib.load(file_path)

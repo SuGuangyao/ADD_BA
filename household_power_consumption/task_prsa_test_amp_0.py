@@ -180,7 +180,7 @@ def xtest(model: nn.Module,
 
 
 if __name__ == '__main__':
-    file_path = './data/pre_data/power.array'
+    file_path = './data/pre_data/power1.array'
 
     batch_size = 2048
     do_train = True
