@@ -14,7 +14,7 @@ import joblib
 import numpy as np
 import matplotlib.pyplot as plt
 
-from models import LSTM, AttBLSTM, BLSTM_L, BLSTM
+from models import LSTM, AttBLSTM, BLSTM_L, BLSTM, BLA
 from dataset import PRAS_Dataset
 
 '''
@@ -55,7 +55,7 @@ def train(model: nn.Module,
     test_loss_list = list()
     test_loss = torch.Tensor([float('inf')])
 
-    weight_file_path = './alldata_weight_LSTM/'
+    weight_file_path = './alldata_weight_BLA/'
 
     if not os.path.exists(weight_file_path):
         os.mkdir(weight_file_path)
@@ -138,7 +138,7 @@ def train(model: nn.Module,
                     scheduler.get_last_lr()[0]))
 
             pbar.update(1)
-            if epoch >= 350 and break_flag >= 50:
+            if epoch >= 100 and break_flag >= 50:
                 break
     return final_name
 
@@ -152,7 +152,7 @@ def xtest(model: nn.Module,
     loss_ca1 = nn.L1Loss().to(device)
     test_total_loss = 0.
     test_total_loss1 = 0.
-    weight_file_path = './alldata_weight_LSTM/'
+    weight_file_path = './alldata_weight_BLA/'
     predict_array_list = list()
     target_array_list = list()
 
@@ -188,9 +188,9 @@ if __name__ == '__main__':
     epochs = 4000
 
     do_test = False
-    input_lens = [16, 32, 48, 64, 80, 96, 112, 128]
+    input_lens = [16, 32,48, 64, 80, 96, 112, 128]
     # 定义模型时需要确定是单一变量预测还是多变量预测
-    model = LSTM(input_size=8, output_size=8)
+    model = BLA(input_size=8, output_size=8)
     for input_len in input_lens:
         print(f"输入长度为{input_len}")
         train_dataset = PRAS_Dataset(input_len=input_len, train=True, file_path=file_path, transformer=True)

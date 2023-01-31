@@ -13,7 +13,7 @@ import joblib
 import numpy as np
 import matplotlib.pyplot as plt
 
-from models import LSTM, AttBLSTM, BLSTM_L, BLSTM
+from models import LSTM, AttBLSTM, BLSTM_L, BLSTM, BLA
 from utils import Air_Dataset
 
 '''
@@ -55,7 +55,7 @@ def train(model: nn.Module,
     test_loss_list = list()
     test_loss = torch.Tensor([float('inf')])
 
-    weight_file_path = './alldata_weight_LSTM/'
+    weight_file_path = './alldata_weight_BLA/'
 
     if not os.path.exists(weight_file_path):
         os.mkdir(weight_file_path)
@@ -156,7 +156,7 @@ def xtest(model: nn.Module,
     loss_ca1 = nn.L1Loss().to(device)
     test_total_loss = 0.
     test_total_loss1 = 0.
-    weight_file_path = './alldata_weight_LSTM/'
+    weight_file_path = './alldata_weight_BLA/'
     predict_array_list = list()
     target_array_list = list()
 
@@ -186,7 +186,7 @@ def xtest(model: nn.Module,
 if __name__ == '__main__':
     file_path = './data/AirQualityUCI/data_array/air.array'
 
-    batch_size = 16
+    batch_size = 1024
     do_train = True
     learning_rate = 0.0001
     epochs = 4000
@@ -194,7 +194,7 @@ if __name__ == '__main__':
     do_test = False
     input_lens = [16, 32, 48, 64, 80, 96, 112, 128]
     # 定义模型时需要确定是单一变量预测还是多变量预测
-    model = LSTM(input_size=12, output_size=12)
+    model = BLA(input_size=12, output_size=12)
     # model = BLSTM(i_size=12, o_size=12)
     # model = BLSTM_L(input_size=12, output_size=12)
     # model = AttBLSTM(input_size=12, output_size=12)

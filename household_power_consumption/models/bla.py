@@ -1,9 +1,26 @@
+import torch
+import torch.nn as nn
 import torch.nn as nn
 import torch
 import torch.nn.functional as F
 
 
-class BLSTM_L(nn.Module):
+
+class Time_Attention(nn.Module):
+    def __init__(self, input_size, out_size, device="cuda"):
+        super(Time_Attention, self).__init__()
+        self.tanh = nn.Tanh()
+        self.softmax = nn.Softmax(dim=0)
+        self.W = torch.randn((input_size, out_size), device=device) * 0.01
+        self.b = torch.randn((1, out_size), device=device) * 0.01
+        self.H = torch.randn((1, out_size), device=device) * 0.01
+
+    def forward(self, x):
+        S = self.softmax(self.tanh(x) @ self.W + self.b)
+        out = self.H * S
+        return out
+
+class BLA (nn.Module):
 
     def __init__(self,
                  input_size: int = 15,
@@ -11,7 +28,7 @@ class BLSTM_L(nn.Module):
                  hidden_dim: int = 256,
                  lstm_dropout: float = 0,
                  linear_dropout=0.1):
-        super(BLSTM_L, self).__init__()
+        super(BLA, self).__init__()
 
         self.input_size = input_size
         self.output_size = output_size
@@ -32,7 +49,7 @@ class BLSTM_L(nn.Module):
                             bidirectional=False,
                             batch_first=True,
                             dropout=self.lstm_dropout)
-
+        self.time_attention = Time_Attention(self.hidden_dim,self.hidden_dim)
         self.dropout = nn.Dropout(self.linear_dropout)
         self.linear = nn.Linear(self.hidden_dim, self.output_size)
 
@@ -40,12 +57,13 @@ class BLSTM_L(nn.Module):
         out, (h_n, c_n) = self.blstm(x)
         #
         out , (h_n, c_n)= self.lstm(out)
-
-        out = out[:, -1, :]
+        out = self.time_attention(out)
+        out = torch.sum(out, dim=1)
         out = self.dropout(out)
-        out = self.linear(out)
+        out = self.linear(out).reshape([-1, 1, self.input_size])
 
         return out
 
     def name(self):
         return self.__class__.__name__
+
