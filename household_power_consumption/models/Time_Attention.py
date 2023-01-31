@@ -6,20 +6,6 @@ import torch.nn.functional as F
 
 
 
-class Time_Attention(nn.Module):
-    def __init__(self, input_size, out_size, device="cuda"):
-        super(Time_Attention, self).__init__()
-        self.tanh = nn.Tanh()
-        self.softmax = nn.Softmax(dim=0)
-        self.W = torch.randn((input_size, out_size), device=device) * 0.01
-        self.b = torch.randn((1, out_size), device=device) * 0.01
-        self.H = torch.randn((1, out_size), device=device) * 0.01
-
-    def forward(self, x):
-        S = self.softmax(self.tanh(x) @ self.W + self.b)
-        out = self.H * S
-        return out
-
 class BLA (nn.Module):
 
     def __init__(self,
@@ -49,7 +35,9 @@ class BLA (nn.Module):
                             bidirectional=False,
                             batch_first=True,
                             dropout=self.lstm_dropout)
-        self.time_attention = Time_Attention(self.hidden_dim,self.hidden_dim)
+        self.tanh = nn.Tanh()
+        self.w = nn.Parameter(torch.Tensor(self.hidden_dim, 1))
+        torch.nn.init.kaiming_normal_(self.w)
         self.dropout = nn.Dropout(self.linear_dropout)
         self.linear = nn.Linear(self.hidden_dim, self.output_size)
 
@@ -57,7 +45,10 @@ class BLA (nn.Module):
         out, (h_n, c_n) = self.blstm(x)
         #
         out , (h_n, c_n)= self.lstm(out)
-        out = self.time_attention(out)
+
+        M = self.tanh(out)
+        alpha = F.softmax(torch.matmul(M, self.w), dim=1)
+        out = out * alpha
         out = torch.sum(out, dim=1)
         out = self.dropout(out)
         out = self.linear(out)

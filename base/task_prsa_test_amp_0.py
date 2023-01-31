@@ -4,8 +4,9 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
+from sklearn.preprocessing import MinMaxScaler
 from torch.cuda import amp
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Dataset
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 import os
@@ -13,13 +14,12 @@ import joblib
 import numpy as np
 import matplotlib.pyplot as plt
 
-from models import LSTM, AttBLSTM, Transformer, LinearTransformer, CNNTransformer, CNNTransformerHighway, MaskedLinearTransformer, BLSTM_L
-from utils import PRAS_Dataset
+from models import LSTM, AttBLSTM, BLSTM_L, BLSTM, BLA
+from dataset import PRAS_Dataset
 
 '''
 Typical Mixed Precision Training
 '''
-
 
 def clip_gradient(optimizer, grad_clip):
     """
@@ -55,7 +55,7 @@ def train(model: nn.Module,
     test_loss_list = list()
     test_loss = torch.Tensor([float('inf')])
 
-    weight_file_path = './alldata_weight_LSTM/'
+    weight_file_path = './alldata_weight_BLA/'
 
     if not os.path.exists(weight_file_path):
         os.mkdir(weight_file_path)
@@ -130,10 +130,6 @@ def train(model: nn.Module,
                     break_flag = 0
                 else:
                     break_flag += 1
-            # train_loss_list.append(train_total_loss)
-            # joblib.dump(train_loss_list, './logs/{}_train_loss_test_amp_0.list'.format(model.name()))
-            # test_loss_list.append(test_total_loss)
-            # joblib.dump(test_loss_list, './logs/{}_test_loss_test_amp_0.list'.format(model.name()))
 
             tqdm.write(
                 'Epoch: {:5} | Train Loss: {:8}| Train MAE: {:8} | Test Loss: {:8}| Test MAE: {:8}  | LR: {:8}'.format(
@@ -142,12 +138,12 @@ def train(model: nn.Module,
                     scheduler.get_last_lr()[0]))
 
             pbar.update(1)
-            if epoch >= 350 and break_flag >= 50:
+            if epoch >= 100 and break_flag >= 50:
                 break
     return final_name
 
 
-def test(model: nn.Module,
+def xtest(model: nn.Module,
          test_dataset: PRAS_Dataset,
          device: str = 'cuda'):
     model.to(device)
@@ -156,7 +152,7 @@ def test(model: nn.Module,
     loss_ca1 = nn.L1Loss().to(device)
     test_total_loss = 0.
     test_total_loss1 = 0.
-    weight_file_path = './alldata_weight_LSTM/'
+    weight_file_path = './alldata_weight_BLA/'
     predict_array_list = list()
     target_array_list = list()
 
@@ -184,17 +180,17 @@ def test(model: nn.Module,
 
 
 if __name__ == '__main__':
-    file_path = './data/data array/prsa1.array'
+    file_path = './data/pre_data/prsa1.array'
 
-    batch_size = 1024
+    batch_size = 2048
     do_train = True
     learning_rate = 0.0001
     epochs = 4000
 
     do_test = False
-    input_lens = [16, 32, 48, 64, 80, 96, 112, 128]
+    input_lens = [16, 32,48, 64, 80, 96, 112, 128]
     # 定义模型时需要确定是单一变量预测还是多变量预测
-    model = LSTM(input_size=15, output_size=15)
+    model = BLA(input_size=15, output_size=15)
     for input_len in input_lens:
         print(f"输入长度为{input_len}")
         train_dataset = PRAS_Dataset(input_len=input_len, train=True, file_path=file_path, transformer=True)
@@ -204,7 +200,7 @@ if __name__ == '__main__':
         test_loader = DataLoader(test_dataset, shuffle=False, batch_size=batch_size, drop_last=True)
 
         start = time.time()
-        final_name = "./data_weight/LSTM_142_0.06178278289735317_0.207856185734272_16.pt"
+        final_name = " "
         if do_train:
             final_name = train(model=model, train_loader=train_loader, test_loader=test_loader, input_len=input_len,
                                learning_rate=learning_rate, epochs=epochs)
@@ -216,7 +212,7 @@ if __name__ == '__main__':
         if do_test:
             # model = BLSTM(input_size=15, output_size=15)
             model.load_state_dict(torch.load(final_name))
-            i, p, t, loss_MSE, loss_MAE, length = test(model=model, test_dataset=test_dataset)
+            i, p, t, loss_MSE, loss_MAE, length = xtest(model=model, test_dataset=test_dataset)
 
             # for plot_feature_idx in range(0, 15):
             #     plt.figure(plot_feature_idx)

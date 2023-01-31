@@ -38,9 +38,7 @@ class BLSTM_L(nn.Module):
 
     def forward(self, x):
         out, (h_n, c_n) = self.blstm(x)
-        #
         out , (h_n, c_n)= self.lstm(out)
-
         out = out[:, -1, :]
         out = self.dropout(out)
         out = self.linear(out)
