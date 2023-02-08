@@ -55,7 +55,7 @@ def train(model: nn.Module,
     test_loss_list = list()
     test_loss = torch.Tensor([float('inf')])
 
-    weight_file_path = './alldata_weight_BLA/'
+    weight_file_path = './data_weight'+model.name()+"/"
 
     if not os.path.exists(weight_file_path):
         os.mkdir(weight_file_path)
@@ -116,17 +116,17 @@ def train(model: nn.Module,
                         file = weight_file_path + '/' + name
                         # print(int(name.split('_')[-1].split('.')[0]))
                         try:
-                            if int(name.split('_')[-1].split('.')[0]) == input_len:
+                            if int(name.split('_')[1]) == input_len:
                                 os.remove(file)
                         except:
                             pass
                     torch.save(model.state_dict(),
-                               weight_file_path + '/' + '{}_{}_{}_{}_{}.pt'.format(model.name(), epoch, test_total_loss,
-                                                                                   test_total_loss1, input_len))
+                               weight_file_path + '/' + '{}_{}_{}_{}_{}.pt'.format(model.name(), input_len, epoch, test_total_loss,
+                                                                                   test_total_loss1))
                     test_loss = test_total_loss
-                    final_name = weight_file_path + '/' + '{}_{}_{}_{}_{}.pt'.format(model.name(), epoch,
-                                                                                     test_total_loss, test_total_loss1,
-                                                                                     input_len)
+                    final_name = weight_file_path + '/' + '{}_{}_{}_{}_{}.pt'.format(model.name(),
+                                                                                     input_len, epoch,
+                                                                                     test_total_loss, test_total_loss1)
                     break_flag = 0
                 else:
                     break_flag += 1
@@ -152,7 +152,7 @@ def xtest(model: nn.Module,
     loss_ca1 = nn.L1Loss().to(device)
     test_total_loss = 0.
     test_total_loss1 = 0.
-    weight_file_path = './alldata_weight_BLA/'
+    weight_file_path ='./alldata_weight'+model.name()+"/"
     predict_array_list = list()
     target_array_list = list()
 
@@ -188,7 +188,7 @@ if __name__ == '__main__':
     epochs = 4000
 
     do_test = False
-    input_lens = [16, 32,48, 64, 80, 96, 112, 128]
+    input_lens = [32, 48, 64, 80, 96, 112]
     # 定义模型时需要确定是单一变量预测还是多变量预测
     model = BLA(input_size=15, output_size=15)
     for input_len in input_lens:

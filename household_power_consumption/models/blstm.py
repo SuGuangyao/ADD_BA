@@ -6,15 +6,15 @@ import torch.nn.functional as F
 class BLSTM(nn.Module):
 
     def __init__(self,
-                 i_size: int = 15,
-                 o_size: int = 15,
+                 input_size: int = 15,
+                 output_size: int = 15,
                  hidden_dim: int = 256,
                  lstm_dropout: float = 0,
                  linear_dropout=0.1):
         super(BLSTM, self).__init__()
 
-        self.input_size = i_size
-        self.output_size = o_size
+        self.input_size = input_size
+        self.output_size = output_size
         self.hidden_dim = hidden_dim
         self.lstm_dropout = lstm_dropout
         self.linear_dropout = linear_dropout

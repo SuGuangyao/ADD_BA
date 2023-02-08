@@ -83,7 +83,7 @@ for maker,model in zip(marker_list,modle_list1):
 plt.legend(labels=['LSTM', 'BLSTM', 'BLSTM-L', 'AttBLSTM', 'BLA'])
 # plt.legend(labels=['LSTM', 'BLSTM', 'BLSTM-L'])
 plt.xticks([0, 1, 2, 3,4,5,6,7], labels=["16","32","48", '64', "80", '96', '112',  '128'])
-plt.xlim([2, 7])
+plt.xlim([0, 7])
 
 plt.xlabel('input sequence length')
 plt.ylabel('test mae')

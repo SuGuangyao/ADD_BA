@@ -16,9 +16,11 @@ class Air_Preprocess(object):
 
         self.raw_df = pd.read_excel(file_path)
         self.df = self.data_washing()
+
         joblib.dump(self.df, data_array_path + 'air.array')
 
     def data_washing(self, ):
+        data_array_path = '../data/AirQualityUCI/data_array/'
         self.raw_df.replace(-200, np.nan, inplace=True)  # 将数据集中的无效值（-200）替换为空值 nan
         self.raw_df = self.raw_df.sort_values(by=['Date', 'Time'], ascending=True)  # 将数据根据 Data 和 Time 升序排列
 
@@ -46,6 +48,7 @@ class Air_Preprocess(object):
         """
         self.raw_df.drop(['NMHC(GT)'], axis=1, inplace=True)  # 删掉只有914个数据的 'NMHC(GT)' 列
         self.raw_df = self.raw_df.fillna(method='ffill')  # 向上填补缺失值
+        self.raw_df.to_csv(data_array_path + 'air.csv', index=True)
         df = self.raw_df.values
 
         return df

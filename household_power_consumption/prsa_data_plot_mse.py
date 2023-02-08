@@ -64,7 +64,8 @@ BLA 89    0.10168626008089632  0.5769861126318574 128.pt
 
 """
 lstm_array = np.array([
-
+0.0203212,
+0.0200838,
                       0.020380,
                       0.021973,
                       0.025755,
@@ -72,7 +73,8 @@ lstm_array = np.array([
                       0.021529,
                       0.024371,])
 blstm_array   = np.divide(np.array([
-
+0.081764,
+0.078363,
                       0.079693,
                       0.078393,
                       0.081417,
@@ -80,7 +82,8 @@ blstm_array   = np.divide(np.array([
                       0.084586,
         0.095323,])     ,4  )
 blstm_lstm_array = np.array([
-
+0.0201888,
+0.0196356,
                       0.020288,
                       0.018893,
                       0.019498,
@@ -88,7 +91,8 @@ blstm_lstm_array = np.array([
                       0.021600,
                       0.022629,])
 att_blstm_array = np.array([
-
+0.019261,
+0.019114,
                       0.019227,
                       0.018871,
                       0.019579,
@@ -96,7 +100,8 @@ att_blstm_array = np.array([
                       0.019779,
                       0.019547,        ])
 bla_array         = np.divide(np.array([
-
+0.085474,
+0.082028,
                       0.080908,
                       0.077274,
                       0.079662,
@@ -121,9 +126,9 @@ for maker,model in zip(marker_list,modle_list):
 
 plt.legend(labels=['LSTM', 'BLSTM', 'BLSTM-L', 'AttBLSTM', 'BLA'])
 # plt.legend(labels=['LSTM', 'BLSTM', 'BLSTM-L'])
-plt.xticks([0, 1, 2, 3,4,5], labels=["48", '64', "80", '96', '112',  '128'])
+plt.xticks([0, 1, 2, 3,4,5,6,7], labels=["16","32","48", '64', "80", '96', '112',  '128'])
 # plt.ylim([0.056, 0.076])
-plt.xlim([0,7])
+plt.xlim([2,7])
 plt.xlabel('input sequence length')
 plt.ylabel('test mse')
 plt.grid(axis='y', linestyle='--')

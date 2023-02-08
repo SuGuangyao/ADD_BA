@@ -77,7 +77,7 @@ plt.legend(labels=['LSTM', 'BLSTM', 'BLSTM-L', 'AttBLSTM', 'BLA'])
 # plt.legend(labels=['LSTM', 'BLSTM', 'BLSTM-L'])
 plt.xticks([0, 1, 2, 3, 4, 5, 6 , 7], labels=["16","32","48", '64', "80", '96', '112', '128'])
 # plt.ylim([0.056, 0.076])
-plt.xlim([0, 7])
+plt.xlim([2, 7])
 plt.xlabel('input sequence length')
 plt.ylabel('test mae')
 plt.grid(axis='y', linestyle='--')
@@ -85,7 +85,7 @@ plt.grid(axis='y', linestyle='--')
 plt.title('多模型在Power数据集上的测试结果 (MAE)')
 
 plt.show()
-plt.savefig('badminton model Power dataset test mae.svg', format='svg')
+plt.savefig('badminton model Power dataset test mae.png', format='png')
 
 
 
