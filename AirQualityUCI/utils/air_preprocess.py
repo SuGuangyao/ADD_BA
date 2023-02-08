@@ -22,9 +22,11 @@ class Air_Preprocess(object):
     def data_washing(self, ):
         data_array_path = '../data/AirQualityUCI/data_array/'
         self.raw_df.replace(-200, np.nan, inplace=True)  # 将数据集中的无效值（-200）替换为空值 nan
+        self.raw_df["Date"] = self.raw_df["Date"].map(str).map(lambda a: a.split(" ")[0])
+        self.raw_df['date'] = self.raw_df['Date'].map(str) +" "+ self.raw_df["Time"].map(str)
         self.raw_df = self.raw_df.sort_values(by=['Date', 'Time'], ascending=True)  # 将数据根据 Data 和 Time 升序排列
 
-        item_list = ['CO(GT)', 'PT08.S1(CO)', 'NMHC(GT)', 'C6H6(GT)', 'PT08.S2(NMHC)', 'NOx(GT)',
+        item_list = ['date', 'CO(GT)', 'PT08.S1(CO)', 'NMHC(GT)', 'C6H6(GT)', 'PT08.S2(NMHC)', 'NOx(GT)',
                      'PT08.S3(NOx)', 'NO2(GT)', 'PT08.S4(NO2)', 'PT08.S5(O3)', 'T', 'RH', 'AH']
         self.raw_df = self.raw_df[item_list]  # 保留 item_list 中的特征
         """此时的统计信息
@@ -48,7 +50,7 @@ class Air_Preprocess(object):
         """
         self.raw_df.drop(['NMHC(GT)'], axis=1, inplace=True)  # 删掉只有914个数据的 'NMHC(GT)' 列
         self.raw_df = self.raw_df.fillna(method='ffill')  # 向上填补缺失值
-        self.raw_df.to_csv(data_array_path + 'air.csv', index=True)
+        self.raw_df.to_csv(data_array_path + 'air.csv', index=False)
         df = self.raw_df.values
 
         return df

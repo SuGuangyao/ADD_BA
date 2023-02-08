@@ -118,7 +118,7 @@ def train(model: nn.Module,
                         file = weight_file_path + '/' + name
                         # print(int(name.split('_')[-1].split('.')[0]))
                         try:
-                            if int(name.split('_')[-1]) == input_len:
+                            if int(name.split('_')[1]) == input_len:
                                 os.remove(file)
                         except:
                             pass

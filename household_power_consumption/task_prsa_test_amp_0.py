@@ -14,7 +14,7 @@ import joblib
 import numpy as np
 import matplotlib.pyplot as plt
 
-from models import LSTM, AttBLSTM, BLSTM_L, BLSTM, BLA
+from models import LSTM, AttBLSTM, BLSTM_L, BLSTM, BLA, LinearTransformer
 from dataset import PRAS_Dataset
 
 '''
@@ -180,17 +180,17 @@ def xtest(model: nn.Module,
 
 
 if __name__ == '__main__':
-    file_path = './data/pre_data/prsa1.array'
+    file_path = './data/pre_data/power1.array'
 
     batch_size = 2048
     do_train = True
     learning_rate = 0.0001
-    epochs = 4000
+    epochs = 400
 
     do_test = False
     input_lens = [32, 48, 64, 80, 96, 112]
     # 定义模型时需要确定是单一变量预测还是多变量预测
-    model = BLA(input_size=15, output_size=15)
+    model =LinearTransformer(input_size=8, output_size=8)
     for input_len in input_lens:
         print(f"输入长度为{input_len}")
         train_dataset = PRAS_Dataset(input_len=input_len, train=True, file_path=file_path, transformer=True)

@@ -22,7 +22,7 @@ class LinearTransformer(nn.Module):
         out = self.encoder(x)
         out = self.transformer(out)
         out = self.decoder(out)
-
+        out = out[:, -1, :]
         return out
 
     def name(self):
